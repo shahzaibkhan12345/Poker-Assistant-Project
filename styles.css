@@ -1,0 +1,130 @@
+/* styles.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+}
+
+.container {
+    max-width: 550px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background-color: #3f51b5; /* A pleasant blue/purple for poker */
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 500;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+.config-panel, .controls, .results-panel {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #4A4A4A;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.controls {
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary { 
+    background-color: #3f51b5; /* Primary button color */
+}
+.btn-primary:hover { 
+    background-color: #303f9f;
+}
+
+.results-panel h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    color: #3f51b5;
+}
+
+.suggestion-box {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Suggestion Styles */
+.suggestion-box.success {
+    background-color: #e8f5e9; /* Light Green */
+    color: #388e3c; /* Dark Green */
+    border: 2px solid #388e3c;
+}
+.suggestion-box.warning {
+    background-color: #fff8e1; /* Light Yellow */
+    color: #fbc02d; /* Yellow/Orange */
+    border: 2px solid #fbc02d;
+}
+.suggestion-box.failure {
+    background-color: #ffebee; /* Light Red */
+    color: #d32f2f; /* Dark Red */
+    border: 2px solid #d32f2f;
+}
+.suggestion-box.error {
+    background-color: #fce4ec; /* Light Pink/Red for errors */
+    color: #c2185b;
+    border: 2px solid #c2185b;
+}

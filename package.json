@@ -1,0 +1,35 @@
+{
+  "name": "poker-gto-assistant",
+  "version": "1.0.0",
+  "description": "GTO Poker Assistant for 6-max Cash Games.",
+  "main": "main.js",
+  "scripts": {
+  "start": "electron .",
+  "build:win": "electron-builder --win nsis --publish=never",
+  "build:mac": "electron-builder --mac dmg --publish=never",
+  "build": "electron-builder --mac dmg --win nsis --publish=never"
+},
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
+  },
+  "build": {
+    "appId": "com.yourcompany.pokergtoassistant",
+    "productName": "GTO Poker Assistant",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.education",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}

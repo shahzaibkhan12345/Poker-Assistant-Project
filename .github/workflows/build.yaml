@@ -1,0 +1,39 @@
+name: Build and Deliver GTO Assistant
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  build:
+    runs-on: macos-latest # *** This is the key: builds on a Mac virtual machine ***
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Use a stable Node.js version
+
+      - name: Install dependencies
+        # Install all npm packages
+        run: npm install
+
+      - name: Run Cross-Platform Build
+        # This single command builds both the Mac DMG and Windows EXE on the Mac VM
+        run: npm run build 
+
+      - name: Upload macOS App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-GTO-Assistant-DMG
+          path: dist/*.dmg 
+          
+      - name: Upload Windows App Artifact (Optional, for your testing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-GTO-Assistant-EXE
+          path: dist/*.exe

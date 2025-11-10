@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTO Poker Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GTO Poker Trainer</h1>
+            <p>6-Max Cash Game Preflop Assistant</p>
+        </header>
+
+        <section class="config-panel">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="position">Your Position:</label>
+                    <select id="position">
+                        <option value="UTG">UTG (Under The Gun)</option>
+                        <option value="HJ">HJ (Hijack)</option>
+                        <option value="CO">CO (Cutoff)</option>
+                        <option value="BTN" selected>BTN (Button)</option>
+                        <option value="SB">SB (Small Blind)</option>
+                        <option value="BB">BB (Big Blind)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="hand">Your Hand (e.g. AKs, QQ, JTo):</label>
+                    <input type="text" id="hand" placeholder="e.g., AQs" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="spot">Current Spot/Scenario:</label>
+                <select id="spot">
+                    <option value="Preflop_Open" selected>Preflop: First to act (Open Raise)</option>
+                    <!-- Expand this list for more complex scenarios later -->
+                    <option value="Face_Open">Preflop: Facing an Open Raise</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="controls">
+            <button id="getSuggestionBtn" class="btn btn-primary">GET GTO SUGGESTION</button>
+        </section>
+
+        <section class="results-panel">
+            <h2>Optimal Action:</h2>
+            <div id="suggestionOutput" class="suggestion-box">
+                <span id="actionText">Enter hand details and click the button.</span>
+            </div>
+        </section>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
