@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-macos:
     runs-on: macos-latest
     
     steps:
@@ -27,14 +27,30 @@ jobs:
       - name: Build for macOS
         run: npm run build:mac
 
-      - name: Build for Windows
-        run: npm run build:win
-
       - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
         with:
           name: macOS-GTO-Assistant
           path: dist/*.dmg
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build for Windows
+        run: npm run build:win
 
       - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
