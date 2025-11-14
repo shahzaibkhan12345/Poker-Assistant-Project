@@ -7,8 +7,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 600,
-    height: 450,
+    width: 650,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       // Security: Keep Context Isolation ON and Node Integration OFF
@@ -41,16 +41,30 @@ app.on('window-all-closed', () => {
 // --- IPC Handlers (The Secure Bridge) ---
 let handHistory = [];
 
-ipcMain.handle('get-gto-suggestion', async (event, position, hand, spot) => {
+ipcMain.handle('get-gto-suggestion', async (event, position, hand, gameState) => {
   try {
-    const suggestion = getGtoSuggestion(position, hand, spot);
+    const suggestion = getGtoSuggestion(position, hand, gameState);
+    
     // Log the hand for basic memory (before returning)
-    handHistory.push({ timestamp: Date.now(), position, hand, spot, result: suggestion });
+    handHistory.push({ 
+      timestamp: Date.now(), 
+      position, 
+      hand, 
+      gameState,
+      result: suggestion 
+    });
+    
+    // Keep only the last 20 hands
     if (handHistory.length > 20) {
-        handHistory = handHistory.slice(-20); // Keep max 20 hands
+      handHistory = handHistory.slice(-20);
     }
 
-    return { success: true, data: suggestion };
+    // Return both suggestion and updated history
+    return { 
+      success: true, 
+      data: suggestion,
+      history: handHistory
+    };
   } catch (error) {
     console.error('GTO Logic Error:', error);
     return { success: false, error: error.message };
@@ -58,6 +72,6 @@ ipcMain.handle('get-gto-suggestion', async (event, position, hand, spot) => {
 });
 
 ipcMain.handle('get-hand-history', () => {
-    // Expose limited hand history to the renderer if needed (for debugging/display)
-    return { success: true, data: handHistory };
+  // Expose limited hand history to the renderer
+  return { success: true, data: handHistory };
 });

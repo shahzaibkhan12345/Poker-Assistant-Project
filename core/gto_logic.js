@@ -1,103 +1,394 @@
 // core/gto_logic.js
 
-// --- 1. CORE GTO DATA STRUCTURE (Architecturally Robust for Expansion) ---
-// This nested structure is designed to be easily expanded by plugging in new GTO data.
-// Structure: [Spot] -> [Position] -> [Hand] -> { Action, Amount }
+// Enhanced GTO data structure that considers player actions
 const GTO_RANGES = {
-    // --- SCENARIO 1: First to act (Open Raise) ---
-    'PREFLOP_OPEN': {
-        'UTG': { 
-            'AA': { action: 'Raise', amount: '3BB' }, 'KK': { action: 'Raise', amount: '3BB' }, 'QQ': { action: 'Raise', amount: '3BB' }, 'AKs': { action: 'Raise', amount: '3BB' },
-            // Add other hands to UTG open range...
+    // Preflop scenarios with different action contexts
+    'PREFLOP': {
+        // First to act scenarios
+        'OPEN': {
+            'UTG': { 
+                'AA': { action: 'Raise', amount: '3BB' }, 'KK': { action: 'Raise', amount: '3BB' }, 
+                'QQ': { action: 'Raise', amount: '3BB' }, 'JJ': { action: 'Raise', amount: '3BB' },
+                'TT': { action: 'Raise', amount: '3BB' }, '99': { action: 'Raise', amount: '3BB' },
+                'AQs': { action: 'Raise', amount: '3BB' }, 'AKs': { action: 'Raise', amount: '3BB' },
+                'AKo': { action: 'Raise', amount: '3BB' }, 'AJs': { action: 'Raise', amount: '3BB' },
+                'KQs': { action: 'Raise', amount: '3BB' }, 'QJs': { action: 'Raise', amount: '3BB' },
+                'JTs': { action: 'Raise', amount: '3BB' }, 'T9s': { action: 'Raise', amount: '3BB' },
+            },
+            'HJ': { 
+                'AA': { action: 'Raise', amount: '3BB' }, 'KK': { action: 'Raise', amount: '3BB' }, 
+                'QQ': { action: 'Raise', amount: '3BB' }, 'JJ': { action: 'Raise', amount: '3BB' },
+                'TT': { action: 'Raise', amount: '3BB' }, '99': { action: 'Raise', amount: '3BB' },
+                '88': { action: 'Raise', amount: '3BB' }, 'AQs': { action: 'Raise', amount: '3BB' },
+                'AKs': { action: 'Raise', amount: '3BB' }, 'AKo': { action: 'Raise', amount: '3BB' },
+                'AJs': { action: 'Raise', amount: '3BB' }, 'ATs': { action: 'Raise', amount: '3BB' },
+                'KQs': { action: 'Raise', amount: '3BB' }, 'KJs': { action: 'Raise', amount: '3BB' },
+                'QJs': { action: 'Raise', amount: '3BB' }, 'QTs': { action: 'Raise', amount: '3BB' },
+                'JTs': { action: 'Raise', amount: '3BB' }, 'T9s': { action: 'Raise', amount: '3BB' },
+                '98s': { action: 'Raise', amount: '3BB' }, 'AJo': { action: 'Raise', amount: '3BB' },
+                'KQo': { action: 'Raise', amount: '3BB' },
+            },
+            'CO': { 
+                'AA': { action: 'Raise', amount: '3BB' }, 'KK': { action: 'Raise', amount: '3BB' }, 
+                'QQ': { action: 'Raise', amount: '3BB' }, 'JJ': { action: 'Raise', amount: '3BB' },
+                'TT': { action: 'Raise', amount: '3BB' }, '99': { action: 'Raise', amount: '3BB' },
+                '88': { action: 'Raise', amount: '3BB' }, '77': { action: 'Raise', amount: '3BB' },
+                'AQs': { action: 'Raise', amount: '3BB' }, 'AKs': { action: 'Raise', amount: '3BB' },
+                'AKo': { action: 'Raise', amount: '3BB' }, 'AJs': { action: 'Raise', amount: '3BB' },
+                'ATs': { action: 'Raise', amount: '3BB' }, 'A9s': { action: 'Raise', amount: '3BB' },
+                'KQs': { action: 'Raise', amount: '3BB' }, 'KJs': { action: 'Raise', amount: '3BB' },
+                'KTs': { action: 'Raise', amount: '3BB' }, 'QJs': { action: 'Raise', amount: '3BB' },
+                'QTs': { action: 'Raise', amount: '3BB' }, 'JTs': { action: 'Raise', amount: '3BB' },
+                'T9s': { action: 'Raise', amount: '3BB' }, '98s': { action: 'Raise', amount: '3BB' },
+                '87s': { action: 'Raise', amount: '3BB' }, 'AJo': { action: 'Raise', amount: '3BB' },
+                'ATo': { action: 'Raise', amount: '3BB' }, 'KQo': { action: 'Raise', amount: '3BB' },
+                'KJo': { action: 'Raise', amount: '3BB' }, 'QJo': { action: 'Raise', amount: '3BB' },
+            },
+            'BTN': { 
+                'AA': { action: 'Raise', amount: '2.5BB' }, 'KK': { action: 'Raise', amount: '2.5BB' }, 
+                'QQ': { action: 'Raise', amount: '2.5BB' }, 'JJ': { action: 'Raise', amount: '2.5BB' },
+                'TT': { action: 'Raise', amount: '2.5BB' }, '99': { action: 'Raise', amount: '2.5BB' },
+                '88': { action: 'Raise', amount: '2.5BB' }, '77': { action: 'Raise', amount: '2.5BB' },
+                '66': { action: 'Raise', amount: '2.5BB' }, '55': { action: 'Raise', amount: '2.5BB' },
+                '44': { action: 'Raise', amount: '2.5BB' }, '33': { action: 'Raise', amount: '2.5BB' },
+                '22': { action: 'Raise', amount: '2.5BB' }, 'AQs': { action: 'Raise', amount: '2.5BB' },
+                'AKs': { action: 'Raise', amount: '2.5BB' }, 'AKo': { action: 'Raise', amount: '2.5BB' },
+                'AJs': { action: 'Raise', amount: '2.5BB' }, 'ATs': { action: 'Raise', amount: '2.5BB' },
+                'A9s': { action: 'Raise', amount: '2.5BB' }, 'A8s': { action: 'Raise', amount: '2.5BB' },
+                'A7s': { action: 'Raise', amount: '2.5BB' }, 'A5s': { action: 'Raise', amount: '2.5BB' },
+                'A4s': { action: 'Raise', amount: '2.5BB' }, 'A3s': { action: 'Raise', amount: '2.5BB' },
+                'A2s': { action: 'Raise', amount: '2.5BB' }, 'KQs': { action: 'Raise', amount: '2.5BB' },
+                'KJs': { action: 'Raise', amount: '2.5BB' }, 'KTs': { action: 'Raise', amount: '2.5BB' },
+                'K9s': { action: 'Raise', amount: '2.5BB' }, 'QJs': { action: 'Raise', amount: '2.5BB' },
+                'QTs': { action: 'Raise', amount: '2.5BB' }, 'Q9s': { action: 'Raise', amount: '2.5BB' },
+                'JTs': { action: 'Raise', amount: '2.5BB' }, 'J9s': { action: 'Raise', amount: '2.5BB' },
+                'T9s': { action: 'Raise', amount: '2.5BB' }, '98s': { action: 'Raise', amount: '2.5BB' },
+                '87s': { action: 'Raise', amount: '2.5BB' }, '76s': { action: 'Raise', amount: '2.5BB' },
+                '65s': { action: 'Raise', amount: '2.5BB' }, '54s': { action: 'Raise', amount: '2.5BB' },
+                'AJo': { action: 'Raise', amount: '2.5BB' }, 'ATo': { action: 'Raise', amount: '2.5BB' },
+                'KQo': { action: 'Raise', amount: '2.5BB' }, 'KJo': { action: 'Raise', amount: '2.5BB' },
+                'KTo': { action: 'Raise', amount: '2.5BB' }, 'QJo': { action: 'Raise', amount: '2.5BB' },
+                'QTo': { action: 'Raise', amount: '2.5BB' }, 'JTo': { action: 'Raise', amount: '2.5BB' },
+            },
+            'SB': { 
+                'AA': { action: 'Raise', amount: '3BB' }, 'KK': { action: 'Raise', amount: '3BB' }, 
+                'QQ': { action: 'Raise', amount: '3BB' }, 'JJ': { action: 'Raise', amount: '3BB' },
+                'TT': { action: 'Raise', amount: '3BB' }, '99': { action: 'Raise', amount: '3BB' },
+                '88': { action: 'Raise', amount: '3BB' }, '77': { action: 'Raise', amount: '3BB' },
+                '66': { action: 'Raise', amount: '3BB' }, '55': { action: 'Raise', amount: '3BB' },
+                '44': { action: 'Raise', amount: '3BB' }, '33': { action: 'Raise', amount: '3BB' },
+                '22': { action: 'Raise', amount: '3BB' }, 'AQs': { action: 'Raise', amount: '3BB' },
+                'AKs': { action: 'Raise', amount: '3BB' }, 'AKo': { action: 'Raise', amount: '3BB' },
+                'AJs': { action: 'Raise', amount: '3BB' }, 'ATs': { action: 'Raise', amount: '3BB' },
+                'A9s': { action: 'Raise', amount: '3BB' }, 'A8s': { action: 'Raise', amount: '3BB' },
+                'A7s': { action: 'Raise', amount: '3BB' }, 'A6s': { action: 'Raise', amount: '3BB' },
+                'A5s': { action: 'Raise', amount: '3BB' }, 'A4s': { action: 'Raise', amount: '3BB' },
+                'A3s': { action: 'Raise', amount: '3BB' }, 'A2s': { action: 'Raise', amount: '3BB' },
+                'KQs': { action: 'Raise', amount: '3BB' }, 'KJs': { action: 'Raise', amount: '3BB' },
+                'KTs': { action: 'Raise', amount: '3BB' }, 'K9s': { action: 'Raise', amount: '3BB' },
+                'QJs': { action: 'Raise', amount: '3BB' }, 'QTs': { action: 'Raise', amount: '3BB' },
+                'Q9s': { action: 'Raise', amount: '3BB' }, 'JTs': { action: 'Raise', amount: '3BB' },
+                'J9s': { action: 'Raise', amount: '3BB' }, 'T9s': { action: 'Raise', amount: '3BB' },
+                '98s': { action: 'Raise', amount: '3BB' }, '87s': { action: 'Raise', amount: '3BB' },
+                '76s': { action: 'Raise', amount: '3BB' }, '65s': { action: 'Raise', amount: '3BB' },
+                '54s': { action: 'Raise', amount: '3BB' }, '43s': { action: 'Raise', amount: '3BB' },
+                'AJo': { action: 'Raise', amount: '3BB' }, 'ATo': { action: 'Raise', amount: '3BB' },
+                'KQo': { action: 'Raise', amount: '3BB' }, 'KJo': { action: 'Raise', amount: '3BB' },
+                'KTo': { action: 'Raise', amount: '3BB' }, 'QJo': { action: 'Raise', amount: '3BB' },
+                'QTo': { action: 'Raise', amount: '3BB' }, 'JTo': { action: 'Raise', amount: '3BB' },
+                'T9o': { action: 'Raise', amount: '3BB' }, '98o': { action: 'Raise', amount: '3BB' },
+            },
         },
-        'HJ': { 
-            'TT': { action: 'Raise', amount: '3BB' }, 'AQs': { action: 'Raise', amount: '3BB' }, 'KJs': { action: 'Raise', amount: '3BB' },
-            // Add other hands to HJ open range...
+        
+        // Facing a single raise
+        'FACE_RAISE': {
+            'VS_UTG': {
+                'BB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'JTs': { action: 'Call', amount: '3BB' }, 'T9s': { action: 'Call', amount: '3BB' },
+                },
+                'SB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '2.5BB' }, '99': { action: 'Call', amount: '2.5BB' },
+                    'AQs': { action: 'Call', amount: '2.5BB' }, 'AKs': { action: 'Call', amount: '2.5BB' },
+                    'AKo': { action: 'Call', amount: '2.5BB' }, 'AJs': { action: 'Call', amount: '2.5BB' },
+                    'KQs': { action: 'Call', amount: '2.5BB' }, 'QJs': { action: 'Call', amount: '2.5BB' },
+                    'JTs': { action: 'Call', amount: '2.5BB' }, 'T9s': { action: 'Call', amount: '2.5BB' },
+                },
+                'BTN': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, 'AQs': { action: 'Call', amount: '3BB' },
+                    'AKs': { action: 'Call', amount: '3BB' }, 'AKo': { action: 'Call', amount: '3BB' },
+                    'AJs': { action: 'Call', amount: '3BB' }, 'ATs': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'QJs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    'AJo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                },
+                'CO': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, '77': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'ATs': { action: 'Call', amount: '3BB' }, 'A9s': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'KTs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'QTs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    '87s': { action: 'Call', amount: '3BB' }, 'AJo': { action: 'Call', amount: '3BB' },
+                    'ATo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                    'KJo': { action: 'Call', amount: '3BB' }, 'QJo': { action: 'Call', amount: '3BB' },
+                },
+                'HJ': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, '77': { action: 'Call', amount: '3BB' },
+                    '66': { action: 'Call', amount: '3BB' }, 'AQs': { action: 'Call', amount: '3BB' },
+                    'AKs': { action: 'Call', amount: '3BB' }, 'AKo': { action: 'Call', amount: '3BB' },
+                    'AJs': { action: 'Call', amount: '3BB' }, 'ATs': { action: 'Call', amount: '3BB' },
+                    'A9s': { action: 'Call', amount: '3BB' }, 'A8s': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'KTs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'QTs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    '87s': { action: 'Call', amount: '3BB' }, '76s': { action: 'Call', amount: '3BB' },
+                    'AJo': { action: 'Call', amount: '3BB' }, 'ATo': { action: 'Call', amount: '3BB' },
+                    'KQo': { action: 'Call', amount: '3BB' }, 'KJo': { action: 'Call', amount: '3BB' },
+                    'QJo': { action: 'Call', amount: '3BB' },
+                },
+            },
+            'VS_HJ': {
+                'BB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'JTs': { action: 'Call', amount: '3BB' }, 'T9s': { action: 'Call', amount: '3BB' },
+                },
+                'SB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '2.5BB' }, '99': { action: 'Call', amount: '2.5BB' },
+                    'AQs': { action: 'Call', amount: '2.5BB' }, 'AKs': { action: 'Call', amount: '2.5BB' },
+                    'AKo': { action: 'Call', amount: '2.5BB' }, 'AJs': { action: 'Call', amount: '2.5BB' },
+                    'KQs': { action: 'Call', amount: '2.5BB' }, 'QJs': { action: 'Call', amount: '2.5BB' },
+                    'JTs': { action: 'Call', amount: '2.5BB' }, 'T9s': { action: 'Call', amount: '2.5BB' },
+                },
+                'BTN': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, 'AQs': { action: 'Call', amount: '3BB' },
+                    'AKs': { action: 'Call', amount: '3BB' }, 'AKo': { action: 'Call', amount: '3BB' },
+                    'AJs': { action: 'Call', amount: '3BB' }, 'ATs': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'QJs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    'AJo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                },
+                'CO': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, '77': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'ATs': { action: 'Call', amount: '3BB' }, 'A9s': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'KTs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'QTs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    '87s': { action: 'Call', amount: '3BB' }, 'AJo': { action: 'Call', amount: '3BB' },
+                    'ATo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                    'KJo': { action: 'Call', amount: '3BB' }, 'QJo': { action: 'Call', amount: '3BB' },
+                },
+            },
+            'VS_CO': {
+                'BB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, 'AQs': { action: 'Call', amount: '3BB' },
+                    'AKs': { action: 'Call', amount: '3BB' }, 'AKo': { action: 'Call', amount: '3BB' },
+                    'AJs': { action: 'Call', amount: '3BB' }, 'ATs': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'QJs': { action: 'Call', amount: '3BB' },
+                    'JTs': { action: 'Call', amount: '3BB' }, 'T9s': { action: 'Call', amount: '3BB' },
+                },
+                'SB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '2.5BB' }, '99': { action: 'Call', amount: '2.5BB' },
+                    '88': { action: 'Call', amount: '2.5BB' }, 'AQs': { action: 'Call', amount: '2.5BB' },
+                    'AKs': { action: 'Call', amount: '2.5BB' }, 'AKo': { action: 'Call', amount: '2.5BB' },
+                    'AJs': { action: 'Call', amount: '2.5BB' }, 'ATs': { action: 'Call', amount: '2.5BB' },
+                    'KQs': { action: 'Call', amount: '2.5BB' }, 'QJs': { action: 'Call', amount: '2.5BB' },
+                    'JTs': { action: 'Call', amount: '2.5BB' }, 'T9s': { action: 'Call', amount: '2.5BB' },
+                },
+                'BTN': {
+                    'AA': { action: 'Raise', amount: '10BB' }, 'KK': { action: 'Raise', amount: '10BB' }, 
+                    'QQ': { action: 'Raise', amount: '10BB' }, 'JJ': { action: 'Raise', amount: '10BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, '77': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'ATs': { action: 'Call', amount: '3BB' }, 'A9s': { action: 'Call', amount: '3BB' },
+                    'KQs': { action: 'Call', amount: '3BB' }, 'KJs': { action: 'Call', amount: '3BB' },
+                    'QJs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    'AJo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                },
+            },
+            'VS_BTN': {
+                'BB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '3BB' }, '99': { action: 'Call', amount: '3BB' },
+                    '88': { action: 'Call', amount: '3BB' }, '77': { action: 'Call', amount: '3BB' },
+                    'AQs': { action: 'Call', amount: '3BB' }, 'AKs': { action: 'Call', amount: '3BB' },
+                    'AKo': { action: 'Call', amount: '3BB' }, 'AJs': { action: 'Call', amount: '3BB' },
+                    'ATs': { action: 'Call', amount: '3BB' }, 'KQs': { action: 'Call', amount: '3BB' },
+                    'QJs': { action: 'Call', amount: '3BB' }, 'JTs': { action: 'Call', amount: '3BB' },
+                    'T9s': { action: 'Call', amount: '3BB' }, '98s': { action: 'Call', amount: '3BB' },
+                    'AJo': { action: 'Call', amount: '3BB' }, 'KQo': { action: 'Call', amount: '3BB' },
+                },
+                'SB': {
+                    'AA': { action: 'Raise', amount: '12BB' }, 'KK': { action: 'Raise', amount: '12BB' }, 
+                    'QQ': { action: 'Raise', amount: '12BB' }, 'JJ': { action: 'Raise', amount: '12BB' },
+                    'TT': { action: 'Call', amount: '2.5BB' }, '99': { action: 'Call', amount: '2.5BB' },
+                    '88': { action: 'Call', amount: '2.5BB' }, '77': { action: 'Call', amount: '2.5BB' },
+                    'AQs': { action: 'Call', amount: '2.5BB' }, 'AKs': { action: 'Call', amount: '2.5BB' },
+                    'AKo': { action: 'Call', amount: '2.5BB' }, 'AJs': { action: 'Call', amount: '2.5BB' },
+                    'ATs': { action: 'Call', amount: '2.5BB' }, 'KQs': { action: 'Call', amount: '2.5BB' },
+                    'QJs': { action: 'Call', amount: '2.5BB' }, 'JTs': { action: 'Call', amount: '2.5BB' },
+                    'T9s': { action: 'Call', amount: '2.5BB' }, '98s': { action: 'Call', amount: '2.5BB' },
+                    'AJo': { action: 'Call', amount: '2.5BB' }, 'KQo': { action: 'Call', amount: '2.5BB' },
+                },
+            },
         },
-        'BTN': { 
-            'A2s': { action: 'Raise', amount: '3BB' }, 'QTo': { action: 'Raise', amount: '3BB' }, 'T7s': { action: 'Raise', amount: '3BB' },
-            // Add other hands to BTN open range...
+        
+        // Facing a 3-bet after raising
+        'FACE_3BET': {
+            'VS_POSITION': {
+                'IP': {
+                    'AA': { action: 'Raise', amount: '25BB' }, 'KK': { action: 'Raise', amount: '25BB' }, 
+                    'QQ': { action: 'Call', amount: '9BB' }, 'JJ': { action: 'Call', amount: '9BB' },
+                    'TT': { action: 'Fold', amount: 'N/A' }, '99': { action: 'Fold', amount: 'N/A' },
+                    'AQs': { action: 'Call', amount: '9BB' }, 'AKs': { action: 'Call', amount: '9BB' },
+                    'AKo': { action: 'Call', amount: '9BB' }, 'AJs': { action: 'Fold', amount: 'N/A' },
+                    'KQs': { action: 'Fold', amount: 'N/A' },
+                },
+                'OOP': {
+                    'AA': { action: 'Raise', amount: '25BB' }, 'KK': { action: 'Raise', amount: '25BB' }, 
+                    'QQ': { action: 'Call', amount: '9BB' }, 'JJ': { action: 'Call', amount: '9BB' },
+                    'TT': { action: 'Fold', amount: 'N/A' }, '99': { action: 'Fold', amount: 'N/A' },
+                    'AQs': { action: 'Call', amount: '9BB' }, 'AKs': { action: 'Call', amount: '9BB' },
+                    'AKo': { action: 'Call', amount: '9BB' }, 'AJs': { action: 'Fold', amount: 'N/A' },
+                    'KQs': { action: 'Fold', amount: 'N/A' },
+                }
+            }
         },
-        'SB': { 
-            '87s': { action: 'Raise', amount: '3BB' }, 'J9o': { action: 'Raise', amount: '3BB' },
-            // Add other hands to SB open range...
-        },
-        // 'CO' and 'BB' are implicitly handled by the lookup function's checks below.
-    },
-    
-    // --- SCENARIO 2: Facing an Open Raise (BTN vs. UTG Example) ---
-    // In a full GTO solution, this would be structured like: 
-    // 'FACE_UTG_OPEN': { 'BTN': { ... } } or 'FACE_HJ_OPEN': { 'BTN': { ... } }
-    // For this MVP, we simplify the spot name to just 'FACE_OPEN' and code for BTN vs UTG.
-    'FACE_OPEN': {
-        'BTN': { // Assuming BTN faces an open from an early position (UTG/HJ)
-            // Action: Raise (3-Bet)
-            'AA': { action: 'Raise', amount: '9BB' },    // 3-Bet
-            'KK': { action: 'Raise', amount: '9BB' },
-            'AKs': { action: 'Raise', amount: '9BB' },
-            
-            // Action: Call (Flat)
-            'AQs': { action: 'Call', amount: '3BB' },    
-            'TT': { action: 'Call', amount: '3BB' },     
-            '98s': { action: 'Call', amount: '3BB' },
-            
-            // Explicit Fold is not needed as the logic handles the absence of a hand
+        
+        // Facing a 4-bet after 3-betting
+        'FACE_4BET': {
+            'VS_POSITION': {
+                'IP': {
+                    'AA': { action: 'Raise', amount: 'All-in' }, 'KK': { action: 'Raise', amount: 'All-in' }, 
+                    'QQ': { action: 'Fold', amount: 'N/A' }, 'JJ': { action: 'Fold', amount: 'N/A' },
+                    'AKs': { action: 'Call', amount: '22BB' }, 'AKo': { action: 'Fold', amount: 'N/A' },
+                },
+                'OOP': {
+                    'AA': { action: 'Raise', amount: 'All-in' }, 'KK': { action: 'Raise', amount: 'All-in' }, 
+                    'QQ': { action: 'Fold', amount: 'N/A' }, 'JJ': { action: 'Fold', amount: 'N/A' },
+                    'AKs': { action: 'Call', amount: '22BB' }, 'AKo': { action: 'Fold', amount: 'N/A' },
+                }
+            }
         }
     }
-    // Add more spots here: 'FACE_3BET', 'FACE_4BET', etc.
 };
 
-
 /**
- * Provides a GTO-based suggestion for a given hand, position, and spot.
- * This function is now simplified to use the unified GTO_RANGES object.
+ * Provides a GTO-based suggestion for a given hand, position, and game situation.
+ * Enhanced to consider the actions of other players.
  * 
  * @param {string} position - Player's position (e.g., 'UTG').
  * @param {string} hand - The two-card starting hand (e.g., 'QQ', 'AKs').
- * @param {string} spot - The current game scenario (e.g., 'Preflop_Open', 'Face_Open').
+ * @param {object} gameState - The current game state including:
+ *   - {string} actionType - Type of action (OPEN, FACE_RAISE, FACE_3BET, etc.)
+ *   - {string} raiserPosition - Position of the raiser (if applicable)
+ *   - {number} numRaises - Number of raises before you
+ *   - {string} ipOop - 'IP' (in position) or 'OOP' (out of position)
  * @returns {object} - The suggested action and amount.
  */
-function getGtoSuggestion(position, hand, spot) {
+function getGtoSuggestion(position, hand, gameState) {
     // Standardize input for reliable key lookups
     const upperHand = hand.toUpperCase().replace(' ', '').replace('O', 'o').replace('S', 's');
     const upperPosition = position.toUpperCase();
-    const upperSpot = spot.toUpperCase();
+    const { actionType, raiserPosition, numRaises, ipOop } = gameState;
     
-    // 1. Check if the SPOT (Scenario) exists in the data structure
-    const scenarioRanges = GTO_RANGES[upperSpot];
-    if (!scenarioRanges) {
-        return { 
-            action: 'Fold', 
-            amount: 'N/A', 
-            message: `FATAL: Scenario '${upperSpot}' not yet coded.` 
-        };
+    // Determine the appropriate scenario based on game state
+    let scenario = GTO_RANGES.PREFLOP;
+    let actionCategory;
+    let vsPosition;
+    
+    switch (actionType) {
+        case 'OPEN':
+            actionCategory = 'OPEN';
+            break;
+        case 'FACE_RAISE':
+            actionCategory = 'FACE_RAISE';
+            vsPosition = `VS_${raiserPosition.toUpperCase()}`;
+            break;
+        case 'FACE_3BET':
+            actionCategory = 'FACE_3BET';
+            vsPosition = 'VS_POSITION';
+            break;
+        case 'FACE_4BET':
+            actionCategory = 'FACE_4BET';
+            vsPosition = 'VS_POSITION';
+            break;
+        default:
+            return { 
+                action: 'Fold', 
+                amount: 'N/A', 
+                message: `Unknown action type: ${actionType}` 
+            };
     }
-
-    // 2. Check if the POSITION has ranges defined for this SPOT
-    const positionRanges = scenarioRanges[upperPosition];
-    if (!positionRanges) {
-        return { 
-            action: 'Fold', 
-            amount: 'N/A', 
-            message: `Position '${upperPosition}' is not coded for scenario '${upperSpot}'.` 
-        };
+    
+    // Get the appropriate range
+    let range;
+    if (actionCategory === 'OPEN') {
+        range = scenario[actionCategory][upperPosition];
+    } else if (actionCategory === 'FACE_RAISE') {
+        range = scenario[actionCategory][vsPosition][upperPosition];
+    } else {
+        range = scenario[actionCategory][vsPosition][ipOop.toUpperCase()];
     }
-
-    // 3. Look up the specific HAND in the defined range
-    const suggestion = positionRanges[upperHand];
+    
+    // Look up the specific hand in the range
+    const suggestion = range && range[upperHand];
     
     if (suggestion) {
         return suggestion;
     }
-
-    // 4. Default Fallback: If Hand is not found in the defined range
-    // A hand not in a pre-flop action range is almost always a fold.
-    const spotType = upperSpot.includes('OPEN') ? 'Open Raise' : 'Action';
     
+    // Default fallback: if hand is not found in the range, it's a fold
     return { 
         action: 'Fold', 
         amount: 'N/A', 
-        message: `Hand '${upperHand}' is not in the optimal ${upperPosition} ${spotType} range.` 
+        message: `Hand '${upperHand}' is not in the optimal range for this situation.` 
     };
 }
 

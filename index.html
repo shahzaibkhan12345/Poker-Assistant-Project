@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>GTO Poker Trainer</h1>
-            <p>6-Max Cash Game Preflop Assistant</p>
+            <p>6-Max Cash Game Assistant</p>
         </header>
 
         <section class="config-panel">
@@ -31,12 +31,43 @@
                     <input type="text" id="hand" placeholder="e.g., AQs" required>
                 </div>
             </div>
+            
             <div class="form-group">
-                <label for="spot">Current Spot/Scenario:</label>
-                <select id="spot">
-                    <option value="Preflop_Open" selected>Preflop: First to act (Open Raise)</option>
-                    <!-- Expand this list for more complex scenarios later -->
-                    <option value="Face_Open">Preflop: Facing an Open Raise</option>
+                <label for="actionType">Action Type:</label>
+                <select id="actionType">
+                    <option value="OPEN" selected>First to act (Open Raise)</option>
+                    <option value="FACE_RAISE">Facing a Raise</option>
+                    <option value="FACE_3BET">Facing a 3-Bet</option>
+                    <option value="FACE_4BET">Facing a 4-Bet</option>
+                </select>
+            </div>
+            
+            <div id="raiserPositionGroup" class="form-group" style="display:none;">
+                <label for="raiserPosition">Raiser Position:</label>
+                <select id="raiserPosition">
+                    <option value="UTG">UTG (Under The Gun)</option>
+                    <option value="HJ">HJ (Hijack)</option>
+                    <option value="CO">CO (Cutoff)</option>
+                    <option value="BTN">BTN (Button)</option>
+                    <option value="SB">SB (Small Blind)</option>
+                </select>
+            </div>
+            
+            <div id="ipOopGroup" class="form-group" style="display:none;">
+                <label for="ipOop">Position Relative to Raiser:</label>
+                <select id="ipOop">
+                    <option value="IP">In Position (IP)</option>
+                    <option value="OOP">Out of Position (OOP)</option>
+                </select>
+            </div>
+            
+            <div id="numRaisesGroup" class="form-group">
+                <label for="numRaises">Number of Raises Before You:</label>
+                <select id="numRaises">
+                    <option value="0" selected>0 (First to act)</option>
+                    <option value="1">1 (Single raise)</option>
+                    <option value="2">2 (3-bet)</option>
+                    <option value="3">3 (4-bet)</option>
                 </select>
             </div>
         </section>
@@ -49,6 +80,13 @@
             <h2>Optimal Action:</h2>
             <div id="suggestionOutput" class="suggestion-box">
                 <span id="actionText">Enter hand details and click the button.</span>
+            </div>
+        </section>
+        
+        <section class="history-panel">
+            <h2>Recent Hands:</h2>
+            <div id="handHistory" class="history-container">
+                <p class="no-history">No hand history yet.</p>
             </div>
         </section>
     </div>

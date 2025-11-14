@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    max-width: 550px;
+    max-width: 600px;
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 12px;
@@ -17,7 +17,7 @@ body {
 }
 
 header {
-    background-color: #3f51b5; /* A pleasant blue/purple for poker */
+    background-color: #3f51b5;
     color: white;
     padding: 15px;
     text-align: center;
@@ -33,7 +33,7 @@ header p {
     font-size: 14px;
 }
 
-.config-panel, .controls, .results-panel {
+.config-panel, .controls, .results-panel, .history-panel {
     padding: 20px;
 }
 
@@ -91,7 +91,11 @@ header p {
     background-color: #303f9f;
 }
 
-.results-panel h2 {
+.results-panel, .history-panel {
+    border-top: 1px solid #e0e0e0;
+}
+
+.results-panel h2, .history-panel h2 {
     margin-top: 0;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
@@ -127,4 +131,55 @@ header p {
     background-color: #fce4ec; /* Light Pink/Red for errors */
     color: #c2185b;
     border: 2px solid #c2185b;
+}
+
+/* History Panel Styles */
+.history-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.no-history {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.history-entry {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.history-entry:last-child {
+    border-bottom: none;
+}
+
+.history-hand {
+    flex: 2;
+    font-weight: 600;
+}
+
+.history-situation {
+    flex: 2;
+    color: #666;
+}
+
+.history-action {
+    flex: 2;
+    text-align: right;
+    font-weight: 600;
+}
+
+.history-action.raise {
+    color: #388e3c;
+}
+
+.history-action.call {
+    color: #fbc02d;
+}
+
+.history-action.fold {
+    color: #d32f2f;
 }

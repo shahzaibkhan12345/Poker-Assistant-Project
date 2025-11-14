@@ -2,7 +2,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  getGtoSuggestion: (position, hand, spot) => 
-    ipcRenderer.invoke('get-gto-suggestion', position, hand, spot),
+  getGtoSuggestion: (position, hand, gameState) => 
+    ipcRenderer.invoke('get-gto-suggestion', position, hand, gameState),
   getHandHistory: () => ipcRenderer.invoke('get-hand-history'),
 });
