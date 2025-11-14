@@ -14,7 +14,6 @@
     "build:all": "electron-builder -mw"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.1.0"
   },
   "devDependencies": {
     "electron": "^39.2.0",
