@@ -1,42 +1,58 @@
 {
-  "name": "poker-gto-assistant",
+  "name": "gto-poker-assistant",
   "version": "1.0.0",
-  "description": "GTO Poker Assistant for 6-max cash games",
+  "description": "GTO Poker Assistant - Mac Compatible 6-Max Cash Game Trainer",
   "main": "main.js",
+  "homepage": "./",
+  "private": true,
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
     "build": "electron-builder",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win",
-    "build:all": "electron-builder --mac --win"
-  },
-  "keywords": [
-    "poker",
-    "gto",
-    "assistant",
-    "electron"
-  ],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^27.0.0",
-    "electron-builder": "^24.6.4"
+    "build:all": "electron-builder -mw"
   },
   "dependencies": {
-    "path": "^0.12.7"
+    "electron-squirrel-startup": "^1.1.0"
+  },
+  "devDependencies": {
+    "electron": "^39.2.0",
+    "electron-builder": "^25.1.0"
   },
   "build": {
-    "appId": "com.pokergto.assistant",
+    "appId": "com.gtopokerassistant.app",
     "productName": "GTO Poker Assistant",
-    "directories": {
-      "output": "dist"
-    },
+    "publish": null,
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "core/**/*",
+      "node_modules/**/*"
+    ],
     "mac": {
-      "category": "public.app-category.productivity"
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.games",
+      "icon": "assets/icon.png"
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   }
 }
