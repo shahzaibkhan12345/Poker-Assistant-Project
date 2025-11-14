@@ -1,77 +1,55 @@
-// main.js
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { getGtoSuggestion } = require('./core/gto_logic'); 
+const { getGtoSuggestion } = require('./core/gto_logic.js');
 
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 650,
-    height: 800,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      // Security: Keep Context Isolation ON and Node Integration OFF
-      contextIsolation: true, 
-      nodeIntegration: false,
-    },
-    titleBarStyle: 'hiddenInset'
-  });
+    mainWindow = new BrowserWindow({
+        width: 1200,
+        height: 900,
+        minWidth: 600,
+        minHeight: 700,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js'),
+        },
+    });
 
-  mainWindow.loadFile('index.html');
-  // mainWindow.webContents.openDevTools();
+    mainWindow.loadFile('index.html');
+
+    // mainWindow.webContents.openDevTools();
+
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
 }
 
-app.whenReady().then(() => {
-  createWindow();
+app.on('ready', createWindow);
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', function () {
+    if (mainWindow === null) createWindow();
+});
+
+ipcMain.handle('get-gto-suggestion', (event, position, hand, gameState) => {
+    try {
+        const suggestion = getGtoSuggestion(position, hand, gameState);
+        return suggestion;
+    } catch (error) {
+        console.error('Error in get-gto-suggestion:', error);
+        return { 
+            error: 'Error processing suggestion. Please check your input.',
+            action: 'Error',
+            amount: 'N/A'
+        };
     }
-  });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-// --- IPC Handlers (The Secure Bridge) ---
-let handHistory = [];
-
-ipcMain.handle('get-gto-suggestion', async (event, position, hand, gameState) => {
-  try {
-    const suggestion = getGtoSuggestion(position, hand, gameState);
-    
-    // Log the hand for basic memory (before returning)
-    handHistory.push({ 
-      timestamp: Date.now(), 
-      position, 
-      hand, 
-      gameState,
-      result: suggestion 
-    });
-    
-    // Keep only the last 20 hands
-    if (handHistory.length > 20) {
-      handHistory = handHistory.slice(-20);
-    }
-
-    // Return both suggestion and updated history
-    return { 
-      success: true, 
-      data: suggestion,
-      history: handHistory
-    };
-  } catch (error) {
-    console.error('GTO Logic Error:', error);
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('get-hand-history', () => {
-  // Expose limited hand history to the renderer
-  return { success: true, data: handHistory };
+ipcMain.handle('get-hand-history', (event) => {
+    return { success: true };
 });

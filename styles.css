@@ -1,6 +1,5 @@
-/* styles.css */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 20px;
     background-color: #f5f5f7;
@@ -21,6 +20,7 @@ header {
     color: white;
     padding: 15px;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
@@ -31,6 +31,80 @@ header h1 {
 header p {
     margin: 5px 0 0;
     font-size: 14px;
+}
+
+/* Added help button styles */
+.help-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.help-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Added modal styles for help panel */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    color: #999;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.help-text h3 {
+    margin-top: 15px;
+    color: #3f51b5;
+}
+
+.help-text ol, .help-text ul {
+    line-height: 1.8;
+}
+
+.help-text li {
+    margin-bottom: 8px;
 }
 
 .config-panel, .controls, .results-panel, .history-panel {
@@ -56,6 +130,13 @@ header p {
     box-sizing: border-box;
     font-size: 14px;
     background-color: #f9f9f9;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #3f51b5;
+    background-color: white;
 }
 
 .form-row {
@@ -71,6 +152,10 @@ header p {
     text-align: center;
     border-top: 1px solid #e0e0e0;
     padding-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .btn {
@@ -85,10 +170,18 @@ header p {
 }
 
 .btn-primary { 
-    background-color: #3f51b5; /* Primary button color */
+    background-color: #3f51b5;
 }
 .btn-primary:hover { 
     background-color: #303f9f;
+}
+
+/* Added secondary button style */
+.btn-secondary {
+    background-color: #757575;
+}
+.btn-secondary:hover {
+    background-color: #616161;
 }
 
 .results-panel, .history-panel {
@@ -111,24 +204,29 @@ header p {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Suggestion Styles */
+/* Added loading state style */
+.suggestion-box.loading {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
 .suggestion-box.success {
-    background-color: #e8f5e9; /* Light Green */
-    color: #388e3c; /* Dark Green */
+    background-color: #e8f5e9;
+    color: #388e3c;
     border: 2px solid #388e3c;
 }
 .suggestion-box.warning {
-    background-color: #fff8e1; /* Light Yellow */
-    color: #fbc02d; /* Yellow/Orange */
+    background-color: #fff8e1;
+    color: #fbc02d;
     border: 2px solid #fbc02d;
 }
 .suggestion-box.failure {
-    background-color: #ffebee; /* Light Red */
-    color: #d32f2f; /* Dark Red */
+    background-color: #ffebee;
+    color: #d32f2f;
     border: 2px solid #d32f2f;
 }
 .suggestion-box.error {
-    background-color: #fce4ec; /* Light Pink/Red for errors */
+    background-color: #fce4ec;
     color: #c2185b;
     border: 2px solid #c2185b;
 }
@@ -148,8 +246,17 @@ header p {
 
 .history-entry {
     display: flex;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    flex-direction: row;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 14px;
+    align-items: center;
+    background-color: #fafafa;
+}
+
+.history-entry:hover {
+    background-color: #f0f0f0;
 }
 
 .history-entry:last-child {
@@ -157,19 +264,22 @@ header p {
 }
 
 .history-hand {
-    flex: 2;
+    flex: 1;
     font-weight: 600;
+    min-width: 60px;
 }
 
 .history-situation {
-    flex: 2;
+    flex: 1.5;
     color: #666;
+    white-space: nowrap;
 }
 
 .history-action {
-    flex: 2;
+    flex: 1;
     text-align: right;
     font-weight: 600;
+    min-width: 80px;
 }
 
 .history-action.raise {
@@ -182,4 +292,24 @@ header p {
 
 .history-action.fold {
     color: #d32f2f;
+}
+
+/* Added loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3f51b5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-spinner.hidden {
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

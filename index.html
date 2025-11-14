@@ -11,7 +11,37 @@
         <header>
             <h1>GTO Poker Trainer</h1>
             <p>6-Max Cash Game Assistant</p>
+            <!-- Added help button in header -->
+            <button id="helpBtn" class="help-btn" title="Show setup guide">?</button>
         </header>
+
+        <!-- Added help modal -->
+        <div id="helpModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>GTO Poker Trainer - Quick Start Guide</h2>
+                <div class="help-text">
+                    <h3>How to Use:</h3>
+                    <ol>
+                        <li><strong>Select Your Position:</strong> Choose where you sit at the table (UTG, HJ, CO, BTN, SB, BB)</li>
+                        <li><strong>Enter Your Hand:</strong> Type your cards (e.g., AKs, QQ, JTo)</li>
+                        <li><strong>Pick Action Type:</strong> Select the scenario you're facing</li>
+                        <li><strong>Get Suggestion:</strong> Press Enter or click the button for GTO guidance</li>
+                    </ol>
+                    <h3>Hand Notation:</h3>
+                    <ul>
+                        <li><strong>s</strong> = suited (e.g., AKs, QJs)</li>
+                        <li><strong>o</strong> = offsuit (e.g., KQo, JTo)</li>
+                        <li><strong>No suffix</strong> = pocket pair (e.g., QQ, 77)</li>
+                    </ul>
+                    <h3>Keyboard Shortcuts:</h3>
+                    <ul>
+                        <li><strong>Enter</strong> = Get suggestion instantly</li>
+                        <li><strong>Esc</strong> = Clear form</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         <section class="config-panel">
             <div class="form-row">
@@ -28,7 +58,8 @@
                 </div>
                 <div class="form-group">
                     <label for="hand">Your Hand (e.g. AKs, QQ, JTo):</label>
-                    <input type="text" id="hand" placeholder="e.g., AQs" required>
+                    <!-- Added auto-complete placeholder and input event support -->
+                    <input type="text" id="hand" placeholder="e.g., AQs" autocomplete="off">
                 </div>
             </div>
             
@@ -73,14 +104,18 @@
         </section>
 
         <section class="controls">
-            <button id="getSuggestionBtn" class="btn btn-primary">GET GTO SUGGESTION</button>
+            <button id="getSuggestionBtn" class="btn btn-primary">GET GTO SUGGESTION (Enter)</button>
+            <!-- Added clear button for keyboard shortcut -->
+            <button id="clearBtn" class="btn btn-secondary">CLEAR (Esc)</button>
         </section>
 
         <section class="results-panel">
             <h2>Optimal Action:</h2>
+            <!-- Added loading state indicator -->
             <div id="suggestionOutput" class="suggestion-box">
                 <span id="actionText">Enter hand details and click the button.</span>
             </div>
+            <div id="loadingIndicator" class="loading-spinner hidden"></div>
         </section>
         
         <section class="history-panel">
