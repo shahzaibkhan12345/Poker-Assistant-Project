@@ -1,39 +1,43 @@
-name: Build and Deliver GTO Assistant
+name: Build and Release GTO Poker Assistant
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest # *** This is the key: builds on a Mac virtual machine ***
-
+    runs-on: macos-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18' # Use a stable Node.js version
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        # Install all npm packages
         run: npm install
 
-      - name: Run Cross-Platform Build
-        # This single command builds both the Mac DMG and Windows EXE on the Mac VM
-        run: npm run build 
+      - name: Build for macOS
+        run: npm run build:mac
 
-      - name: Upload macOS App Artifact
+      - name: Build for Windows
+        run: npm run build:win
+
+      - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-GTO-Assistant-DMG
-          path: dist/*.dmg 
-          
-      - name: Upload Windows App Artifact (Optional, for your testing)
+          name: macOS-GTO-Assistant
+          path: dist/*.dmg
+
+      - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-GTO-Assistant-EXE
+          name: Windows-GTO-Assistant
           path: dist/*.exe
