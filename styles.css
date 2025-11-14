@@ -4,10 +4,12 @@ body {
     padding: 20px;
     background-color: #f5f5f7;
     color: #1d1d1f;
+    /* increased base font size from system default to 16px */
+    font-size: 16px;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 12px;
@@ -18,7 +20,7 @@ body {
 header {
     background-color: #3f51b5;
     color: white;
-    padding: 15px;
+    padding: 20px;
     text-align: center;
     position: relative;
 }
@@ -26,11 +28,13 @@ header {
 header h1 {
     margin: 0;
     font-weight: 500;
+    /* increased header size from default to 28px */
+    font-size: 28px;
 }
 
 header p {
     margin: 5px 0 0;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 /* Added help button styles */
@@ -120,15 +124,18 @@ header p {
     margin-bottom: 5px;
     font-weight: 600;
     color: #4A4A4A;
+    /* increased label font size from 14px to 16px */
+    font-size: 16px;
 }
 
 .form-group input, .form-group select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
     box-sizing: border-box;
-    font-size: 14px;
+    /* increased input font size from 14px to 16px */
+    font-size: 16px;
     background-color: #f9f9f9;
     transition: border-color 0.2s;
 }
@@ -159,11 +166,12 @@ header p {
 }
 
 .btn {
-    padding: 12px 30px;
+    padding: 14px 32px;
     border: none;
     border-radius: 6px;
     color: white;
-    font-size: 16px;
+    /* increased button font size from 16px to 18px */
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -196,10 +204,11 @@ header p {
 }
 
 .suggestion-box {
-    padding: 20px;
+    padding: 25px;
     border-radius: 8px;
     text-align: center;
-    font-size: 20px;
+    /* increased suggestion text from 20px to 28px for better visibility */
+    font-size: 28px;
     font-weight: 700;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -247,10 +256,11 @@ header p {
 .history-entry {
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    padding: 12px;
+    gap: 15px;
+    padding: 14px;
     border-bottom: 1px solid #e5e5e5;
-    font-size: 14px;
+    /* increased history entry font size from 14px to 15px */
+    font-size: 15px;
     align-items: center;
     background-color: #fafafa;
 }

@@ -6,8 +6,8 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 900,
+        width: 1000,
+        height: 850,
         minWidth: 600,
         minHeight: 700,
         webPreferences: {
@@ -19,7 +19,8 @@ function createWindow() {
 
     mainWindow.loadFile('index.html');
 
-    // mainWindow.webContents.openDevTools();
+    // Set default zoom to 125% (1.25) for better visibility
+    mainWindow.webContents.setZoomLevel(0.25);
 
     mainWindow.on('closed', function () {
         mainWindow = null;
